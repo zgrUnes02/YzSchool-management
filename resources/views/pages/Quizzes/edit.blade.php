@@ -1,0 +1,204 @@
+
+@extends('layouts.master')
+@section('css')
+    
+@section('title')
+    {{ trans('quiz_trans.edit_quiz') }} ({{ $quiz -> name }})
+@stop
+@endsection
+
+@section('page-header')
+    <!-- breadcrumb -->
+        <div class="page-title">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h4 class="mb-0"> {{ trans('quiz_trans.edit_quiz') }} ({{ $quiz -> name }}) </h4>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb pt-0 pr-0 float-left float-sm-right ">
+                        <li class="breadcrumb-item"><a href="{{route('home')}}" class="default-color">{{ trans('teachers_trans.Home') }}</a></li>
+                        <li class="breadcrumb-item active"> {{ trans('quiz_trans.edit_quiz') }} ({{ $quiz -> name }}) </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    <!-- breadcrumb -->
+@section('PageTitle')
+    {{ trans('quiz_trans.edit_quiz') }} ({{ $quiz -> name }})
+@stop
+@endsection
+
+@section('content')
+    <!-- row -->
+    <div class="row">
+        <div class="col-md-12 mb-30">
+            <div class="card card-statistics h-100">
+                <div class="card-body">
+
+                    @if(session()->has('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>{{ session()->get('error') }}</strong>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <div class="col-xs-12">
+                        <div class="col-md-12">
+                            <br>
+                            <form action="{{route('quiz.update' , $quiz -> id)}}" method="post" autocomplete="off">
+                                @csrf
+                                @method('PUT')
+
+                                <div class="form-row">
+
+                                    <div class="col">
+                                        <label for="title">{{ trans('quiz_trans.name_ar') }} : <span class="text-danger">*</span></label>
+                                        <input type="text" name="name_ar" class="form-control" value="{{$quiz -> getTranslation('name' , 'ar')}}">
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="title">{{ trans('quiz_trans.name_en') }} : <span class="text-danger">*</span></label>
+                                        <input type="text" name="name_en" class="form-control" value="{{$quiz -> getTranslation('name' , 'en')}}">
+                                    </div>
+
+                                </div>
+
+                                <br>
+
+                                <div class="form-row mt-3">
+
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="subject_id">{{trans('quiz_trans.name_subject')}} : <span class="text-danger">*</span></label>
+                                            <select class="custom-select mr-sm-2" name="subject_id">
+                                                <option selected value="{{$quiz -> subject_id}}">{{$quiz -> subjects -> name}}</option>
+                                                @foreach($subjects as $subject)
+                                                    <option  value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="Grade_id">{{trans('quiz_trans.name_teacher')}} : <span class="text-danger">*</span></label>
+                                            <select class="custom-select mr-sm-2" name="teacher_id">
+                                                <option selected  value="{{$quiz -> teacher_id}}">{{$quiz -> teachers -> name}}</option>
+                                                @foreach($teachers as $teacher)
+                                                    <option  value="{{ $teacher -> id }}">{{ $teacher -> name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-row mt-4">
+
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="Grade_id">{{trans('quiz_trans.grade_name')}} : <span class="text-danger">*</span></label>
+                                            <select class="custom-select mr-sm-2" name="Grade_id">
+                                                <option selected  value="{{$quiz -> grade_id}}">{{$quiz -> grades -> name}}</option>
+                                                @foreach($grades as $grade)
+                                                    <option  value="{{ $grade->id }}">{{ $grade->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="Classroom_id">{{trans('quiz_trans.classroom_name')}} : <span class="text-danger">*</span></label>
+                                            <select class="custom-select mr-sm-2" name="Classroom_id">
+                                                <option selected  value="{{$quiz -> classrooms_id}}">{{$quiz -> classrooms -> class_name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="section_id">{{trans('quiz_trans.section_name')}} : <span class="text-danger">*</span></label>
+                                            <select class="custom-select mr-sm-2" name="section_id">
+                                                <option selected  value="{{$quiz -> section_id}}">{{$quiz -> sections -> name_section}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <button class="mt-3 btn btn-success btn-sm nextBtn btn-lg pull-right" type="submit">{{ trans('quiz_trans.edit_quiz') }}</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- row closed -->
+
+@endsection
+
+@section('js')
+
+    <script>
+        $(document).ready(function () {
+            $('select[name="Grade_id"]').on('change', function () {
+                var Grade_id = $(this).val();
+                if (Grade_id) {
+                    $.ajax({
+                        url: "{{ URL::to('Get_classrooms') }}/" + Grade_id,
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                            $('select[name="Classroom_id"]').empty();
+                            $.each(data, function (key, value) {
+                                $('select[name="Classroom_id"]').append('<option value="' + key + '">' + value + '</option>');
+                            });
+                        },
+                    });
+                }
+                else {
+                    console.log('AJAX load did not work');
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('select[name="Classroom_id"]').on('change', function () {
+                var Classroom_id = $(this).val();
+                if (Classroom_id) {
+                    $.ajax({
+                        url: "{{ URL::to('Get_Sections') }}/" + Classroom_id,
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                            $('select[name="section_id"]').empty();
+                            $.each(data, function (key, value) {
+                                $('select[name="section_id"]').append('<option value="' + key + '">' + value + '</option>');
+                            });
+                        },
+                    });
+                }
+                else {
+                    console.log('AJAX load did not work');
+                }
+            });
+        });
+    </script>
+
+@endsection
